@@ -1,0 +1,38 @@
+pipeline {
+    agent any
+
+    stages {
+        stage('Checkout') {
+            steps {
+                checkout scm
+            }
+        }
+        stage('Build') {
+            steps {
+                // In this example, there is no actual build step, as we're just deploying an HTML page.
+            }
+        }
+        stage('Deploy to Tomcat') {
+            steps {
+                script {
+                    def tomcatUrl = 'http://tomcat:password@http://16.171.22.140:8090//manager/text'
+                    def warFileName = 'qersaqdsqds.war'
+                    def warFilePath = "${env.WORKSPACE}/${qersaqdsqds.war}"
+
+                    sh "rm -rf ${qersaqdsqds.war}"
+                    sh "zip -r ${qersaqdsqds.war} *"
+
+                    def curlCmd = """
+                        curl -v -T ${qersaqdsqds.war} ${http://16.171.22.140:8090/}/deploy?path=/context-path&update=true
+                    """
+                    sh curlCmd
+                }
+            }
+        }
+    }
+    post {
+        always {
+            cleanWs()
+        }
+    }
+}
